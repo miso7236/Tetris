@@ -257,27 +257,29 @@ void DrawChange(char f[HEIGHT][WIDTH],int command,int currentBlock,int blockRota
 	//1. 이전 블록 정보를 찾는다. ProcessCommand의 switch문을 참조할 것
 	//2. 이전 블록 정보를 지운다. DrawBlock함수 참조할 것.
 	//3. 새로운 블록 정보를 그린다. 
-    int i, j;
+    // 이전 블록 지우기
+    //ClearBlock(field, prevBlockY, prevBlockX, prevBlockRotate, prevBlockID);
+    // 필드 그리기
     DrawField();
-    for(i = 0; i < 4; i++)
-        for(j = 0; j < 4; j++)
-            if(block[currentBlock][blockRotate][i][j] == 1)
-                if(blockY + i >= 0)
-                    move(blockY + i + 1, blockX + j + 1);
-                    printw(".");
+    // 새 블록 그리기
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            if (block[currentBlock][blockRotate][i][j] == 1 && blockY + i >= 0) {
+                move(blockY + i + 1, blockX + j + 1);
+                printw(".");
+            }
+        }
+    }
 }
 
 
-void BlockDown(int sig){
-	// user code
 
-	//강의자료 p26-27의 플로우차트를 참고한다.
-    if(CheckToMove(field, nextBlock[0], blockRotate, blockY + 1, blockX)){
+void BlockDown(int sig) {
+    if (CheckToMove(field, nextBlock[0], blockRotate, blockY + 1, blockX)) {
         blockY++;
         DrawChange(field, ' ', nextBlock[0], blockRotate, blockY, blockX);
-        timer(1);
-    } else{
-        if(blockY == -1) gameOver = 1;
+    } else {
+        if (blockY == -1) gameOver = 1;
         score += AddBlockToField(field, nextBlock[0], blockRotate, blockY, blockX);
         score += DeleteLine(field);
         nextBlock[0] = nextBlock[1];
@@ -287,7 +289,7 @@ void BlockDown(int sig){
         blockX = WIDTH / 2 - 2;
         DrawNextBlock(nextBlock);
         PrintScore(score);
-        if(gameOver) endwin();
+        if (gameOver) endwin();
     }
 }
 
