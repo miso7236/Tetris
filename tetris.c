@@ -277,18 +277,17 @@ void DrawChange(char f[HEIGHT][WIDTH],int command,int currentBlock,int blockRota
     DrawBlock(blockY, blockX, currentBlock, blockRotate, '#');
 }
 
-void BlockDown(int sig){
-	// user code
-
-	//강의자료 p26-27의 플로우차트를 참고한다.
-    if (CheckToMove(field, currentBlock, blockRotate, blockY + 1, blockX)) {
-        blockY++; // 내릴 수 있으면 Y 좌표 증가
+int BlockDown(int sig) {
+    // 블록이 한 칸 아래로 움직일 수 있는지 검사
+    if (CheckToMove(field, sig, blockRotate, blockY + 1, blockX)) {
+        // 움직일 수 있으면 1을 반환
+        return 1;
     } else {
-        AddBlockToField(field, currentBlock, blockRotate, blockY, blockX); // 더 이상 내릴 수 없으면 필드에 블록 추가
-        DeleteLine(field); // 라인 삭제 검사 및 점수 계산
-        // 새로운 블록 생성 및 위치 초기화
+        // 움직일 수 없으면 0을 반환
+        return 0;
     }
 }
+
 
 void AddBlockToField(char f[HEIGHT][WIDTH],int currentBlock,int blockRotate, int blockY, int blockX){
 	// user code
