@@ -1,0 +1,86 @@
+
+
+
+
+
+
+
+
+
+
+
+function intCheckToMove(field: Array, currentBlock, blockRotate, blockY, blockX) 
+-> int:
+if blockX < 0 or blockY < 0 or blockX >= WIDTH or blockY >= HEIGHT:
+        return 0
+    else:
+for i from 0 to 4:
+            for j from 0 to 4:
+                if block[currentBlock][blockRotate][i][j] == 1:
+                    if field[blockY + i][blockX + j] != 0:
+                        return 0
+    return 1
+
+function DrawChange(field: Array, command: int, currentBlock, blockRotate, blockY, blockX) -> None:
+    x = 0
+    y = 0
+    switch command:
+        case KEY_RIGHT:
+            x = blockX - 1
+            y = blockY
+        case KEY_LEFT:
+            x = blockX + 1
+            y = blockY
+            break
+        case KEY_UP:
+            blockRotate = (blockRotate + 1) % 4
+            break
+        case KEY_DOWN:
+            x = blockX
+            y = blockY - 1
+            break
+    
+    for i from 0 to 4:
+        for j from 0 to 4:
+            if block[currentBlock][blockRotate][i][j] == 1 and i + y >= 0:
+                move(i + y + 1, j + x + 1)
+                print(".")
+    move(HEIGHT, WIDTH + 10)
+    DrawBlock(blockY, blockX, currentBlock, blockRotate, 'tile')
+
+function BlockDown(field: Array, currentBlock, blockRotate, blockY, blockX, nextBlock, score) -> None:
+    if intCheckToMove(field, currentBlock, blockRotate, blockY + 1, blockX) == 1:
+        blockY += 1
+        displayBlock()
+    else:
+        if blockY == -1:
+            gameOver = True
+        nextBlock[0] = nextBlock[1]
+        nextBlock[1] = rand() % 7
+        score += DeleteLine(field)
+        resetCurrentBlockPosition()
+        PrintScore(score)
+        DrawNextBlock()
+        DrawField(field)
+
+function AddBlockToField(field: Array, currentBlock, blockRotate, blockY, blockX) -> None:
+    for i from 0 to 4:
+        for j from 0 to 4:
+            if block[currentBlock][blockRotate][i][j] == 1:
+                if 0 <= blockX + j < WIDTH and 0 <= blockY + i < HEIGHT:
+                    field[blockY + i][blockX + j] = 1
+
+function DeleteLine(field: Array) -> int:
+    ans = 0
+    for i from 0 to HEIGHT:
+        full = True
+        for j from 0 to WIDTH:
+            if field[i][j] != 1:
+                full = False
+                break
+        if full:
+            ans += 1
+            for x from i down to 1:
+                for y from 0 to WIDTH:
+                    field[x][y] = field[x - 1][y]
+    return ans * ans * 100
