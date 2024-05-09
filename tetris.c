@@ -239,8 +239,8 @@ char menu(){
 int CheckToMove(char f[HEIGHT][WIDTH],int currentBlock,int blockRotate, int blockY, int blockX){
 	// user code
 	if (blockX < 0 || blockY < 0 || blockX >= WIDTH || blockY >= HEIGHT) return 0;
-	for (int i = 0; i < BLOCK_WIDTH; i++) {
-		for (int j = 0; j < BLOCK_HEIGHT; j++) {
+	for (int i = 0; i < BLOCK_HEIGHT; i++) {
+		for (int j = 0; j < BLOCK_WIDTH; j++) {
 			if (block[currentBlock][blockRotate][i][j] == 1)
 				if (field[blockY + i][blockX + j] != 0) return 0;
 		}
@@ -258,12 +258,47 @@ void DrawChange(char f[HEIGHT][WIDTH],int command,int currentBlock,int blockRota
 	//1. 이전 블록 정보를 찾는다. ProcessCommand의 switch문을 참조할 것
 	//2. 이전 블록 정보를 지운다. DrawBlock함수 참조할 것.
 	//3. 새로운 블록 정보를 그린다. 
+
+	int x, y;
+	x = y = 0;
+
+    switch command:
+        case KEY_RIGHT:
+            x = blockX - 1;
+            y = blockY;
+        case KEY_LEFT:
+            x = blockX + 1;
+            y = blockY;
+            break;
+        case KEY_UP:
+            blockRotate = (blockRotate + 1) % 4;
+            break;
+        case KEY_DOWN:
+            x = blockX;
+            y = blockY - 1;
+            break;
+
+	for (int i = 0; i < BLOCK_HEIGHT; i++) {
+		for (int j = 0; j < BLOCK_WIDTH; j++) {
+			if (block[currentBlock][blockRotate][i][j] == 1 && i + y >= 0) { 
+				move (i + y + 1, j + x + 1); 
+				print("."; )
+			}
+		}
+	}
+	move (HEIGHT, WIDTH + 10);
+    // DrawBlock(blockY, blockX, currentBlock, blockRotate, 'tile');
+
 }
 
 void BlockDown(int sig){
 	// user code
 
 	//강의자료 p26-27의 플로우차트를 참고한다.
+
+	
+
+
 }
 
 void AddBlockToField(char f[HEIGHT][WIDTH],int currentBlock,int blockRotate, int blockY, int blockX){
