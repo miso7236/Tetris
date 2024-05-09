@@ -262,7 +262,7 @@ void DrawChange(char f[HEIGHT][WIDTH],int command,int currentBlock,int blockRota
 	int x, y;
 	x = y = 0;
 
-    switch command:
+    switch (command) {
         case KEY_RIGHT:
             x = blockX - 1;
             y = blockY;
@@ -277,17 +277,18 @@ void DrawChange(char f[HEIGHT][WIDTH],int command,int currentBlock,int blockRota
             x = blockX;
             y = blockY - 1;
             break;
+	}
 
 	for (int i = 0; i < BLOCK_HEIGHT; i++) {
 		for (int j = 0; j < BLOCK_WIDTH; j++) {
 			if (block[currentBlock][blockRotate][i][j] == 1 && i + y >= 0) { 
 				move (i + y + 1, j + x + 1); 
-				print("."; )
+				//printf(".");
 			}
 		}
 	}
+    DrawBlock(blockY, blockX, nextBlock[0], blockRotate, ' ');
 	move (HEIGHT, WIDTH + 10);
-    // DrawBlock(blockY, blockX, currentBlock, blockRotate, 'tile');
 
 }
 
@@ -295,16 +296,36 @@ void BlockDown(int sig){
 	// user code
 
 	//강의자료 p26-27의 플로우차트를 참고한다.
-
 	
-
-
+	if (CheckToMove(field, nextBlock[0], blockRotate, blockY + 1, blockX)) {
+		blockY ++;
+		DrawChange(field, GetCommand(), nextBlock[0], blockRotate, blockY, blockX);
+	} else {
+		if (blockY == -1) gameOver = 1;
+		nextBlock[0] = nextBlock[1];
+		nextBlock[1] = rand() % 7;
+		// score += DeleteLine(field)
+		AddBlockToField(field, nextBlock[0], blockRotate, blockY, blockX);
+		DeleteLine(field);
+		// PrintScore(score);
+		DrawNextBlock(&nextBlock[1]);
+		DrawField();
+	}
 }
 
 void AddBlockToField(char f[HEIGHT][WIDTH],int currentBlock,int blockRotate, int blockY, int blockX){
 	// user code
 
 	//Block이 추가된 영역의 필드값을 바꾼다.
+	int i, j;
+	for (i = 0; i < BLOCK_HEIGHT; i++) {
+		for (j = 0; j < BLOCK_WIDTH; j++) {
+			if (block[currentBlock][blockRotate][i][j] == 1)
+				if ((0 <= blockX + j && blockX + j < WIDTH) && (0 <= blockY + i && blockY + i < HEIGHT)) 
+					f[blockY + i][blockX +j] = 1;
+		}
+	}
+
 }
 
 int DeleteLine(char f[HEIGHT][WIDTH]){
@@ -312,6 +333,23 @@ int DeleteLine(char f[HEIGHT][WIDTH]){
 
 	//1. 필드를 탐색하여, 꽉 찬 구간이 있는지 탐색한다.
 	//2. 꽉 찬 구간이 있으면 해당 구간을 지운다. 즉, 해당 구간으로 필드값을 한칸씩 내린다.
+
+	int i, j, k, l, ans = 0;
+	int full;
+
+	for (i = 0; i < HEIGHT; i++) {
+		full = 1;
+		for (j = 0; j < WIDTH; j++) {
+			if (!field[i][j]) { full = 0; break; }
+		}
+		if (full) {
+			ans += 1;
+			for (k = i; k >= 1; k--)
+				for (l = 0; l < WIDTH; l++)
+					field[k][l] = field[k-1][l];
+		}
+	}
+    return ans * ans * 100;
 }
 
 ///////////////////////////////////////////////////////////////////////////
